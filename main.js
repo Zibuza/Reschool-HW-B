@@ -12,43 +12,32 @@ const multer = require('multer');
 const path = require('path');
 const { upload } = require('./config/clodinary.config');
 
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, 'uploads')
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null,  Date.now() + path.extname(file.originalname))
-//     }
-// })
+app.use(cors());
+app.use(express.json());
+app.use(express.static('uploads'));
 
-// const upload = multer({storage})
-
-connectToDb()
-
-app.use(cors())
-app.use(express.json())
-app.use(express.static('uploads'))
-
-app.use('/users', isAuth, userRouter)
-app.use('/posts', isAuth, postRouter)
-app.use('/auth', authRouter)
+app.use('/users', isAuth, userRouter);
+app.use('/posts', isAuth, postRouter);
+app.use('/auth', authRouter);
 
 app.post('/upload', upload.single('image'), (req, res) => {
-    if (!req.file || !req.file.path) {
-        return res.status(400).json({ error: 'Image upload failed' });
-    }
-    res.status(200).json({ url: req.file.path });
+  if (!req.file || !req.file.path) {
+    return res.status(400).json({ error: 'Image upload failed' });
+  }
+  res.status(200).json({ url: req.file.path });
 });
 
-
-
 app.get('/', (req, res) => {
-    res.send('hello world')
-})
+  res.send('hello world');
+});
 
-app.listen(3000, () => {
-    console.log(`server running on http://localhost:3000`)
-})
-
-
-// npm i express mongoose bcrypt dotenv jsonwebtoken joi
+// ✅ დაისტარტოს სერვერი მხოლოდ მას შემდეგ, რაც ბაზასთან კავშირი წარმატებულია
+connectToDb()
+  .then(() => {
+    app.listen(3000, () => {
+      console.log('✅ Server running on http://localhost:3000');
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Failed to connect to MongoDB', err);
+  });
