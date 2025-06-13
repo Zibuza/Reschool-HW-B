@@ -9,22 +9,32 @@ require('dotenv').config()
 const authRouter = Router()
 
 authRouter.post('/sign-up', async (req, res) => {
-    const {error} = userSchema.validate(req.body || {})
-    if(error){
-        return res.status(400).json(error)
-    }
-    const {fullName, email, password} = req.body
+    console.log('➡️ sign-up request:', req.body);
 
-    const existUser = await userModel.findOne({email})
-    if(existUser){
-        return res.status(400).json({message: 'user already exist'})
+    const { error } = userSchema.validate(req.body || {});
+    if (error) {
+        console.log('❌ Joi validation error:', error.details);
+        return res.status(400).json(error);
     }
 
-    const hashedPass = await bcrypt.hash(password, 10)
-    await userModel.create({fullName, password: hashedPass, email})
-    res.status(201).json({message: "user regisgted successfully"})
+    const { fullName, email, password } = req.body;
 
-})
+    try {
+        const existUser = await userModel.findOne({ email });
+        if (existUser) {
+            return res.status(400).json({ message: 'user already exist' });
+        }
+
+        const hashedPass = await bcrypt.hash(password, 10);
+        await userModel.create({ fullName, password: hashedPass, email });
+        console.log('✅ User registered');
+        res.status(201).json({ message: "user registered successfully" });
+    } catch (err) {
+        console.error('❌ Sign-up error:', err); // ეს ყველაზე მთავარი სტრიქონია
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 
 
 authRouter.post('/sign-in', async (req, res) => {

@@ -3,17 +3,17 @@ const { default: mongoose } = require("mongoose");
 const userSchema = new mongoose.Schema({
     fullName: {
         type: String,
-        required: true // FIXED: Added required validation
+        required: true 
     },
     email: {
         type: String,
-        required: true, // FIXED: Changed from "require" to "required"
+        required: true, 
         lowercase: true,
-        unique: true // ADDED: Ensure unique emails
+        unique: true 
     },
     password: {
         type: String,
-        required: true, // FIXED: Changed from "require" to "required"
+        required: true, 
         select: false
     },
     posts: {
