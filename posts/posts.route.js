@@ -6,7 +6,33 @@ const { upload } = require("../config/clodinary.config");
 
 const postRouter = Router();
 
-// GET all posts with sorting support
+/**
+ * @swagger
+ * tags:
+ *   name: Posts
+ *   description: Blog posts
+ */
+
+/**
+ * @swagger
+ * /posts:
+ *   get:
+ *     summary: Get all posts
+ *     tags: [Posts]
+ *     security: 
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum: [most-liked, least-liked, date-asc, title-asc]
+ *         description: Sort posts by criteria
+ *     responses:
+ *       200:
+ *         description: List of blog posts
+ */
+
 postRouter.get('/', async (req, res) => {
     const { sort } = req.query;
 
@@ -46,7 +72,33 @@ postRouter.get('/', async (req, res) => {
     }
 });
 
-// CREATE post with optional image
+/**
+ * @swagger
+ * /posts:
+ *   post:
+ *     summary: Create a new post
+ *     tags: [Posts]
+ *     security: 
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               content:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       201:
+ *         description: Post created successfully
+ */
+
 postRouter.post('/', (req, res) => {
     upload.single('image')(req, res, async (err) => {
         if (err) {
@@ -92,6 +144,24 @@ postRouter.post('/', (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ * /posts/{id}:
+ *   get:
+ *     summary: Get post by ID
+ *     tags: [Posts]
+ *     security: 
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Post details
+ */
 // GET post by ID
 postRouter.get('/:id', async (req, res) => {
     const { id } = req.params;
@@ -113,6 +183,24 @@ postRouter.get('/:id', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /posts/{id}:
+ *   delete:
+ *     summary: Delete a post
+ *     tags: [Posts]
+ *     security: 
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Post deleted successfully
+ */
 // DELETE post
 postRouter.delete('/:id', async (req, res) => {
     const { id } = req.params;
@@ -143,6 +231,38 @@ postRouter.delete('/:id', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /posts/{id}:
+ *   put:
+ *     summary: Update a post
+ *     tags: [Posts]
+ *     security: 
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               content:
+ *                 type: string
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Post updated successfully
+ */
 // UPDATE post with optional image
 postRouter.put('/:id', (req, res) => {
     upload.single('image')(req, res, async (err) => {
@@ -187,7 +307,35 @@ postRouter.put('/:id', (req, res) => {
     });
 });
 
-// REACT to post (like/dislike)
+/**
+ * @swagger
+ * /posts/{id}/reactions:
+ *   post:
+ *     summary: React to a post (like/dislike)
+ *     tags: [Posts]
+ *     security: 
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 enum: [like, dislike]
+ *     responses:
+ *       200:
+ *         description: Reaction updated successfully
+ */
+
 postRouter.post('/:id/reactions', async (req, res) => {
     const { id } = req.params;
     const { type } = req.body;

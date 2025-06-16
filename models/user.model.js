@@ -29,6 +29,6 @@ const userSchema = new mongoose.Schema({
     avatar: {
         type: String,
     }
-}, {timestamps: true}) // ADDED: timestamps for createdAt and updatedAt
+}, {timestamps: true})
 
 module.exports = mongoose.model('user', userSchema)
