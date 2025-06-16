@@ -10,7 +10,7 @@ const options = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: 'reschool-hw-b-vyx8.vercel.app/',
       },
     ],
     components: {
