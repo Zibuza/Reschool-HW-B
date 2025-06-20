@@ -1,10 +1,10 @@
 require('dotenv').config();
 
 const express = require('express');
-const app = express(); // ✅ Must come before setupSwagger
+const app = express(); 
 
 const setupSwagger = require('./swagger');
-setupSwagger(app); // ✅ Now 'app' is defined
+setupSwagger(app);
 
 const userRouter = require('./users/user.route');
 const connectToDb = require('./db/connectToDB');
